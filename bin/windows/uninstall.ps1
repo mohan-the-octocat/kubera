@@ -17,8 +17,8 @@ param(
 
 function Show-Usage {
     @"
-Usage: .\uninstall.ps1 [OPTIONS]
-       .\uninstall.cmd [OPTIONS]
+Usage: .\bin\windows\uninstall.ps1 [OPTIONS]
+       .\bin\windows\uninstall.cmd [OPTIONS]
 
 Options:
   -ProjectDirectory, -p DIR   Remove plugin from a specific project workspace.
@@ -26,8 +26,8 @@ Options:
   -Help, -h                   Show this help message.
 
 Examples:
-  .\uninstall.ps1                      # Remove from global plugin directories
-  .\uninstall.ps1 -p C:\work\my-project # Remove from project workspace
+  .\bin\windows\uninstall.ps1                      # Remove from global plugin directories
+  .\bin\windows\uninstall.ps1 -p C:\work\my-project # Remove from project workspace
 "@
 }
 

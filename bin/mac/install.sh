@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Kubera installer (Linux & macOS)
+# Kubera installer for macOS
 #
 # Installs the Kubera Antigravity UI plugin into the Antigravity plugin directory.
 # Supports symlinking (default, for local git clones) and copying (for downloaded
@@ -14,6 +14,21 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN_NAME="kubera"
 
+# Resolve PLUGIN_ROOT by traversing upwards until plugin.json is found
+CURRENT_DIR="${SCRIPT_DIR}"
+PLUGIN_ROOT=""
+while [[ "${CURRENT_DIR}" != "/" ]]; do
+  if [[ -f "${CURRENT_DIR}/plugin.json" ]]; then
+    PLUGIN_ROOT="${CURRENT_DIR}"
+    break
+  fi
+  CURRENT_DIR="$(dirname "${CURRENT_DIR}")"
+done
+
+if [[ -z "${PLUGIN_ROOT}" ]]; then
+  PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+fi
+
 GLOBAL_TARGETS=(
   "${HOME}/.gemini/antigravity/plugins"
   "${HOME}/.gemini/config/plugins"
@@ -26,7 +41,7 @@ INSTALL_MODE="symlink" # "symlink" or "copy"
 
 print_usage() {
   cat <<EOF
-Usage: ./install.sh [OPTIONS]
+Usage: ./bin/mac/install.sh [OPTIONS]
 
 Options:
   -p, --project-dir DIR   Install plugin scoped to a specific project workspace.
@@ -39,9 +54,9 @@ Options:
   -h, --help              Show this message.
 
 Examples:
-  ./install.sh                     # Global install (symlink)
-  ./install.sh --copy              # Global install (copy files)
-  ./install.sh -p /path/to/project # Project-scoped install
+  ./bin/mac/install.sh                     # Global install (symlink)
+  ./bin/mac/install.sh --copy              # Global install (copy files)
+  ./bin/mac/install.sh -p /path/to/project # Project-scoped install
 
 After installing, restart Antigravity and open the "Kubera" pane.
 EOF
@@ -97,9 +112,9 @@ else
 fi
 
 echo "============================================================"
-echo " Kubera Installer (Linux & macOS)"
+echo " Kubera Installer (macOS)"
 echo "============================================================"
-echo " Source Directory : ${SCRIPT_DIR}"
+echo " Plugin Root      : ${PLUGIN_ROOT}"
 echo " Install Mode     : ${INSTALL_MODE}"
 if [[ -n "${PROJECT_DIR}" ]]; then
   echo " Target Scope     : Project (${PROJECT_DIR})"
@@ -123,10 +138,10 @@ echo " Node Runtime     : $(node --version) (verified >= 20)"
 
 # Run tests if test files exist and not skipped
 if [[ "${RUN_TESTS}" == "true" ]]; then
-  if [[ -f "${SCRIPT_DIR}/tests/pricing.test.mjs" && -f "${SCRIPT_DIR}/tests/aggregate.test.mjs" ]]; then
+  if [[ -f "${PLUGIN_ROOT}/tests/pricing.test.mjs" && -f "${PLUGIN_ROOT}/tests/aggregate.test.mjs" ]]; then
     echo ""
     echo "Running pre-flight test suite..."
-    node --test "${SCRIPT_DIR}/tests/pricing.test.mjs" "${SCRIPT_DIR}/tests/aggregate.test.mjs" >/dev/null
+    node --test "${PLUGIN_ROOT}/tests/pricing.test.mjs" "${PLUGIN_ROOT}/tests/aggregate.test.mjs" >/dev/null
     echo "✓ Tests passed (31/31)"
   fi
 fi
@@ -144,21 +159,22 @@ for dir in "${TARGETS[@]}"; do
 
   if [[ "${INSTALL_MODE}" == "copy" ]]; then
     mkdir -p "${target_plugin}"
-    cp -rp "${SCRIPT_DIR}/plugin.json" "${target_plugin}/"
-    [ -d "${SCRIPT_DIR}/assets" ] && cp -rp "${SCRIPT_DIR}/assets" "${target_plugin}/"
-    [ -d "${SCRIPT_DIR}/sidecars" ] && cp -rp "${SCRIPT_DIR}/sidecars" "${target_plugin}/"
-    [ -f "${SCRIPT_DIR}/package.json" ] && cp -rp "${SCRIPT_DIR}/package.json" "${target_plugin}/"
-    [ -f "${SCRIPT_DIR}/README.md" ] && cp -rp "${SCRIPT_DIR}/README.md" "${target_plugin}/"
+    cp -rp "${PLUGIN_ROOT}/plugin.json" "${target_plugin}/"
+    [ -d "${PLUGIN_ROOT}/assets" ] && cp -rp "${PLUGIN_ROOT}/assets" "${target_plugin}/"
+    [ -d "${PLUGIN_ROOT}/sidecars" ] && cp -rp "${PLUGIN_ROOT}/sidecars" "${target_plugin}/"
+    [ -d "${PLUGIN_ROOT}/bin" ] && cp -rp "${PLUGIN_ROOT}/bin" "${target_plugin}/"
+    [ -f "${PLUGIN_ROOT}/package.json" ] && cp -rp "${PLUGIN_ROOT}/package.json" "${target_plugin}/"
+    [ -f "${PLUGIN_ROOT}/README.md" ] && cp -rp "${PLUGIN_ROOT}/README.md" "${target_plugin}/"
     echo "✓ Copied: ${target_plugin}"
   else
-    ln -s "${SCRIPT_DIR}" "${target_plugin}"
-    echo "✓ Symlinked: ${target_plugin} -> ${SCRIPT_DIR}"
+    ln -s "${PLUGIN_ROOT}" "${target_plugin}"
+    echo "✓ Symlinked: ${target_plugin} -> ${PLUGIN_ROOT}"
   fi
 done
 
 RATE_VERSION="unknown"
-if [[ -f "${SCRIPT_DIR}/sidecars/kubera/pricing.json" ]]; then
-  RATE_VERSION="$(node -p "require('${SCRIPT_DIR}/sidecars/kubera/pricing.json').table_version")"
+if [[ -f "${PLUGIN_ROOT}/sidecars/kubera/pricing.json" ]]; then
+  RATE_VERSION="$(node -p "require('${PLUGIN_ROOT}/sidecars/kubera/pricing.json').table_version")"
 fi
 
 cat <<EOF

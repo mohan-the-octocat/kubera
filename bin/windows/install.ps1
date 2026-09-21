@@ -20,8 +20,8 @@ param(
 
 function Show-Usage {
     @"
-Usage: .\install.ps1 [OPTIONS]
-       .\install.cmd [OPTIONS]
+Usage: .\bin\windows\install.ps1 [OPTIONS]
+       .\bin\windows\install.cmd [OPTIONS]
 
 Options:
   -ProjectDirectory, -p DIR   Install plugin scoped to a specific project workspace.
@@ -32,9 +32,9 @@ Options:
   -Help, -h                   Show this help message.
 
 Examples:
-  .\install.ps1                      # Global install (NTFS junction)
-  .\install.ps1 -Copy                # Global install (copy files)
-  .\install.ps1 -p C:\work\my-project # Project-scoped install
+  .\bin\windows\install.ps1                      # Global install (NTFS junction)
+  .\bin\windows\install.ps1 -Copy                # Global install (copy files)
+  .\bin\windows\install.ps1 -p C:\work\my-project # Project-scoped install
 "@
 }
 
@@ -45,10 +45,26 @@ if ($Help) {
 
 $ErrorActionPreference = "Stop"
 
-# Resolve script root directory
+# Resolve script directory and traverse upwards to find plugin.json (PluginRoot)
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 if (-not $ScriptDir) {
     $ScriptDir = (Get-Location).Path
+}
+
+$CurrentDir = $ScriptDir
+$PluginRoot = $null
+while ($CurrentDir -and (Test-Path $CurrentDir)) {
+    if (Test-Path (Join-Path $CurrentDir "plugin.json")) {
+        $PluginRoot = $CurrentDir
+        break
+    }
+    $Parent = Split-Path -Parent $CurrentDir
+    if (-not $Parent -or $Parent -eq $CurrentDir) { break }
+    $CurrentDir = $Parent
+}
+
+if (-not $PluginRoot) {
+    $PluginRoot = (Resolve-Path (Join-Path $ScriptDir "..\..")).Path
 }
 
 $PluginName = "kubera"
@@ -82,7 +98,7 @@ if ($CustomTargetDirectories.Count -gt 0) {
 Write-Host "============================================================" -ForegroundColor Cyan
 Write-Host " Kubera Installer (Windows)" -ForegroundColor Cyan
 Write-Host "============================================================" -ForegroundColor Cyan
-Write-Host " Source Directory : $ScriptDir"
+Write-Host " Plugin Root      : $PluginRoot"
 Write-Host " Mode             : $(if ($Copy) { 'Copy' } else { 'NTFS Junction' })"
 Write-Host " Target Scope     : $(if ($ProjectDirectory) { "Project ($ProjectDirectory)" } else { 'Global' })"
 
@@ -108,8 +124,8 @@ try {
 
 # Run tests if requested
 if (-not $SkipTests) {
-    $pricingTest = Join-Path $ScriptDir "tests\pricing.test.mjs"
-    $aggregateTest = Join-Path $ScriptDir "tests\aggregate.test.mjs"
+    $pricingTest = Join-Path $PluginRoot "tests\pricing.test.mjs"
+    $aggregateTest = Join-Path $PluginRoot "tests\aggregate.test.mjs"
     if ((Test-Path $pricingTest) -and (Test-Path $aggregateTest)) {
         Write-Host "`nRunning pre-flight test suite..."
         & node --test $pricingTest $aggregateTest | Out-Null
@@ -156,6 +172,9 @@ function Install-PluginTarget {
         if (Test-Path (Join-Path $SourcePath "sidecars")) {
             Copy-Item -Path (Join-Path $SourcePath "sidecars") -Destination $Destination -Recurse -Force
         }
+        if (Test-Path (Join-Path $SourcePath "bin")) {
+            Copy-Item -Path (Join-Path $SourcePath "bin") -Destination $Destination -Recurse -Force
+        }
         if (Test-Path (Join-Path $SourcePath "package.json")) {
             Copy-Item -Path (Join-Path $SourcePath "package.json") -Destination $Destination -Force
         }
@@ -182,11 +201,11 @@ function Install-PluginTarget {
 }
 
 foreach ($target in $Targets) {
-    Install-PluginTarget -TargetDir $target -SourcePath $ScriptDir -Name $PluginName -DoCopy $Copy
+    Install-PluginTarget -TargetDir $target -SourcePath $PluginRoot -Name $PluginName -DoCopy $Copy
 }
 
 $RateVersion = "unknown"
-$PricingJson = Join-Path $ScriptDir "sidecars\kubera\pricing.json"
+$PricingJson = Join-Path $PluginRoot "sidecars\kubera\pricing.json"
 if (Test-Path $PricingJson) {
     try {
         $PricingData = Get-Content $PricingJson -Raw | ConvertFrom-Json

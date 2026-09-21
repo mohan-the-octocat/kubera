@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# Kubera uninstaller (Linux & macOS)
+# Kubera uninstaller for Linux
 #
 # Removes the Kubera Antigravity UI plugin from target plugin directories.
 # ==============================================================================
@@ -18,7 +18,7 @@ PROJECT_DIR=""
 
 print_usage() {
   cat <<EOF
-Usage: ./uninstall.sh [OPTIONS]
+Usage: ./bin/linux/uninstall.sh [OPTIONS]
 
 Options:
   -p, --project-dir DIR   Remove plugin from a specific project workspace.
@@ -26,8 +26,8 @@ Options:
   -h, --help              Show this message.
 
 Examples:
-  ./uninstall.sh                     # Remove from global plugin directories
-  ./uninstall.sh -p /path/to/project # Remove from project workspace
+  ./bin/linux/uninstall.sh                     # Remove from global plugin directories
+  ./bin/linux/uninstall.sh -p /path/to/project # Remove from project workspace
 EOF
 }
 
@@ -67,7 +67,7 @@ else
 fi
 
 echo "============================================================"
-echo " Kubera Uninstaller"
+echo " Kubera Uninstaller (Linux)"
 echo "============================================================"
 
 REMOVED=0

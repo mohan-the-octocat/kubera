@@ -155,34 +155,41 @@ jobs:
 
             | Platform | Archive Format | Quick Install Command |
             | :--- | :--- | :--- |
-            | 🐧 **Linux** | [`kubera-linux.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-linux.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-linux.zip) | `tar -xzf kubera-linux.tar.gz && cd kubera && ./install.sh --copy` |
-            | 🍎 **macOS** | [`kubera-darwin.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-darwin.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-darwin.zip) | `tar -xzf kubera-darwin.tar.gz && cd kubera && ./install.sh --copy` |
-            | 🪟 **Windows** | [`kubera-windows.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-windows.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-windows.zip) | `tar -xzf kubera-windows.tar.gz && cd kubera && .\install.ps1 -Copy` |
-            | 🌐 **Universal** | [`kubera-universal.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-universal.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-universal.zip) | Multi-platform archive containing Linux, macOS, and Windows scripts |
+            | 🐧 **Linux** | [`kubera-linux.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-linux.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-linux.zip) | `tar -xzf kubera-linux.tar.gz && cd kubera && ./bin/linux/install.sh --copy` |
+            | 🍎 **macOS** | [`kubera-darwin.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-darwin.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-darwin.zip) | `tar -xzf kubera-darwin.tar.gz && cd kubera && ./bin/mac/install.sh --copy` |
+            | 🪟 **Windows** | [`kubera-windows.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-windows.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-windows.zip) | `tar -xzf kubera-windows.tar.gz && cd kubera && .\bin\windows\install.ps1 -Copy` |
+            | 🌐 **Universal** | [`kubera-universal.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-universal.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-universal.zip) | Multi-platform archive with scripts under `bin/linux/`, `bin/mac/`, `bin/windows/` |
 
             ---
 
             ### 🚀 Installation Guide
 
-            #### 🐧 Linux & 🍎 macOS
+            #### 🐧 Linux
             ```bash
-            tar -xzf kubera-linux.tar.gz  # or kubera-darwin.tar.gz on macOS
+            tar -xzf kubera-linux.tar.gz
             cd kubera
-            ./install.sh --copy
+            ./bin/linux/install.sh --copy
+            ```
+
+            #### 🍎 macOS
+            ```bash
+            tar -xzf kubera-darwin.tar.gz
+            cd kubera
+            ./bin/mac/install.sh --copy
             ```
 
             #### 🪟 Windows (PowerShell)
             ```powershell
             tar -xzf kubera-windows.tar.gz
             cd kubera
-            .\install.ps1 -Copy
+            .\bin\windows\install.ps1 -Copy
             ```
 
             #### 🪟 Windows (Command Prompt)
             ```cmd
             tar -xzf kubera-windows.tar.gz
             cd kubera
-            .\install.cmd --copy
+            .\bin\windows\install.cmd --copy
             ```
 
             ---

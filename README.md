@@ -31,10 +31,10 @@ Pre-built, standalone release packages for major operating systems are published
 
 | Platform | Archive Formats | Install Command |
 | :--- | :--- | :--- |
-| 🐧 **Linux** | `.tar.gz` · `.zip` | `tar -xzf kubera-linux.tar.gz && cd kubera && ./install.sh --copy` |
-| 🍎 **macOS** | `.tar.gz` · `.zip` | `tar -xzf kubera-darwin.tar.gz && cd kubera && ./install.sh --copy` |
-| 🪟 **Windows** | `.tar.gz` · `.zip` | `tar -xzf kubera-windows.tar.gz && cd kubera && .\install.ps1 -Copy` |
-| 🌐 **Universal** | `.tar.gz` · `.zip` | Multi-platform fallback archive with scripts for all operating systems |
+| 🐧 **Linux** | `.tar.gz` · `.zip` | `tar -xzf kubera-linux.tar.gz && cd kubera && ./bin/linux/install.sh --copy` |
+| 🍎 **macOS** | `.tar.gz` · `.zip` | `tar -xzf kubera-darwin.tar.gz && cd kubera && ./bin/mac/install.sh --copy` |
+| 🪟 **Windows** | `.tar.gz` · `.zip` | `tar -xzf kubera-windows.tar.gz && cd kubera && .\bin\windows\install.ps1 -Copy` |
+| 🌐 **Universal** | `.tar.gz` · `.zip` | Multi-platform fallback archive with scripts under `bin/linux/`, `bin/mac/`, `bin/windows/` |
 
 Integrity checksums (`SHA256SUMS.txt`) are attached to every release.
 
@@ -44,39 +44,51 @@ Integrity checksums (`SHA256SUMS.txt`) are attached to every release.
 
 Download the archive for your operating system from the latest release, extract, and run:
 
-**Linux & macOS:**
+**Linux:**
 ```bash
-tar -xzf kubera-linux.tar.gz   # or kubera-darwin.tar.gz on macOS
+tar -xzf kubera-linux.tar.gz
 cd kubera
-./install.sh --copy
+./bin/linux/install.sh --copy
+```
+
+**macOS:**
+```bash
+tar -xzf kubera-darwin.tar.gz
+cd kubera
+./bin/mac/install.sh --copy
 ```
 
 **Windows (PowerShell):**
 ```powershell
 tar -xzf kubera-windows.tar.gz
 cd kubera
-.\install.ps1 -Copy
+.\bin\windows\install.ps1 -Copy
 ```
 
 **Windows (Command Prompt):**
 ```cmd
 tar -xzf kubera-windows.tar.gz
 cd kubera
-.\install.cmd --copy
+.\bin\windows\install.cmd --copy
 ```
 
 ### Option B: From Source Clone
 
 ```bash
-# Linux / macOS
+# Linux
 git clone https://github.com/mohan-the-octocat/kubera.git
 cd kubera
-./install.sh
+./bin/linux/install.sh
+
+# macOS
+git clone https://github.com/mohan-the-octocat/kubera.git
+cd kubera
+./bin/mac/install.sh
 
 # Windows (PowerShell)
 git clone https://github.com/mohan-the-octocat/kubera.git
 cd kubera
-.\install.ps1
+.\bin\windows\install.ps1
 ```
 
 Symlinks or creates an NTFS directory junction into `~/.gemini/antigravity/plugins/kubera` (and `~/.gemini/config/plugins/kubera`) and verifies the test suite. Restart Antigravity and open the **Kubera** pane in the AuxPane.
@@ -84,11 +96,14 @@ Symlinks or creates an NTFS directory junction into `~/.gemini/antigravity/plugi
 ### Uninstallation
 
 ```bash
-# Linux / macOS
-./uninstall.sh
+# Linux
+./bin/linux/uninstall.sh
+
+# macOS
+./bin/mac/uninstall.sh
 
 # Windows (PowerShell)
-.\uninstall.ps1
+.\bin\windows\uninstall.ps1
 ```
 
 There is no build step. The sidecar is plain ESM Node with no third-party dependencies; the host resolves `sidecar_sdk` at run time.

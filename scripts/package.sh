@@ -55,9 +55,10 @@ stage_common() {
 echo "Staging Linux package..."
 PKG_LINUX="${STAGING_DIR}/linux/kubera"
 stage_common "${PKG_LINUX}"
-cp -p "${REPO_ROOT}/install.sh" "${PKG_LINUX}/"
-cp -p "${REPO_ROOT}/uninstall.sh" "${PKG_LINUX}/"
-chmod +x "${PKG_LINUX}/install.sh" "${PKG_LINUX}/uninstall.sh"
+mkdir -p "${PKG_LINUX}/bin/linux"
+cp -p "${REPO_ROOT}/bin/linux/install.sh" "${PKG_LINUX}/bin/linux/"
+cp -p "${REPO_ROOT}/bin/linux/uninstall.sh" "${PKG_LINUX}/bin/linux/"
+chmod +x "${PKG_LINUX}/bin/linux/install.sh" "${PKG_LINUX}/bin/linux/uninstall.sh"
 
 cat << 'EOF' > "${PKG_LINUX}/QUICKSTART.md"
 # Kubera (Linux) Quickstart
@@ -76,19 +77,19 @@ tar -xzf kubera-linux.tar.gz
 cd kubera
 
 # 1. Standard Installation (copies plugin into ~/.gemini/antigravity/plugins):
-./install.sh --copy
+./bin/linux/install.sh --copy
 
 # 2. Or Project-Scoped Installation (isolated to a specific workspace):
-./install.sh --copy -p /path/to/my-project
+./bin/linux/install.sh --copy -p /path/to/my-project
 ```
 
 Restart Antigravity and open the **Kubera** pane in the AuxPane.
 
 ## Uninstallation
 ```bash
-./uninstall.sh
+./bin/linux/uninstall.sh
 # Or for project-scoped:
-./uninstall.sh -p /path/to/my-project
+./bin/linux/uninstall.sh -p /path/to/my-project
 ```
 EOF
 
@@ -98,9 +99,12 @@ EOF
 echo "Staging Darwin / macOS package..."
 PKG_DARWIN="${STAGING_DIR}/darwin/kubera"
 stage_common "${PKG_DARWIN}"
-cp -p "${REPO_ROOT}/install.sh" "${PKG_DARWIN}/"
-cp -p "${REPO_ROOT}/uninstall.sh" "${PKG_DARWIN}/"
-chmod +x "${PKG_DARWIN}/install.sh" "${PKG_DARWIN}/uninstall.sh"
+mkdir -p "${PKG_DARWIN}/bin/mac" "${PKG_DARWIN}/bin/macos"
+cp -p "${REPO_ROOT}/bin/mac/install.sh" "${PKG_DARWIN}/bin/mac/"
+cp -p "${REPO_ROOT}/bin/mac/uninstall.sh" "${PKG_DARWIN}/bin/mac/"
+cp -p "${REPO_ROOT}/bin/mac/install.sh" "${PKG_DARWIN}/bin/macos/"
+cp -p "${REPO_ROOT}/bin/mac/uninstall.sh" "${PKG_DARWIN}/bin/macos/"
+chmod +x "${PKG_DARWIN}/bin/mac/"*.sh "${PKG_DARWIN}/bin/macos/"*.sh
 
 cat << 'EOF' > "${PKG_DARWIN}/QUICKSTART.md"
 # Kubera (macOS) Quickstart
@@ -119,19 +123,19 @@ tar -xzf kubera-darwin.tar.gz
 cd kubera
 
 # 1. Standard Installation (copies plugin into ~/.gemini/antigravity/plugins):
-./install.sh --copy
+./bin/mac/install.sh --copy
 
 # 2. Or Project-Scoped Installation (isolated to a specific workspace):
-./install.sh --copy -p /path/to/my-project
+./bin/mac/install.sh --copy -p /path/to/my-project
 ```
 
 Restart Antigravity and open the **Kubera** pane in the AuxPane.
 
 ## Uninstallation
 ```bash
-./uninstall.sh
+./bin/mac/uninstall.sh
 # Or for project-scoped:
-./uninstall.sh -p /path/to/my-project
+./bin/mac/uninstall.sh -p /path/to/my-project
 ```
 EOF
 
@@ -141,12 +145,13 @@ EOF
 echo "Staging Windows package..."
 PKG_WINDOWS="${STAGING_DIR}/windows/kubera"
 stage_common "${PKG_WINDOWS}"
-cp -p "${REPO_ROOT}/install.ps1" "${PKG_WINDOWS}/"
-cp -p "${REPO_ROOT}/install.cmd" "${PKG_WINDOWS}/"
-cp -p "${REPO_ROOT}/install.bat" "${PKG_WINDOWS}/"
-cp -p "${REPO_ROOT}/uninstall.ps1" "${PKG_WINDOWS}/"
-cp -p "${REPO_ROOT}/uninstall.cmd" "${PKG_WINDOWS}/"
-cp -p "${REPO_ROOT}/uninstall.bat" "${PKG_WINDOWS}/"
+mkdir -p "${PKG_WINDOWS}/bin/windows"
+cp -p "${REPO_ROOT}/bin/windows/install.ps1" "${PKG_WINDOWS}/bin/windows/"
+cp -p "${REPO_ROOT}/bin/windows/install.cmd" "${PKG_WINDOWS}/bin/windows/"
+cp -p "${REPO_ROOT}/bin/windows/install.bat" "${PKG_WINDOWS}/bin/windows/"
+cp -p "${REPO_ROOT}/bin/windows/uninstall.ps1" "${PKG_WINDOWS}/bin/windows/"
+cp -p "${REPO_ROOT}/bin/windows/uninstall.cmd" "${PKG_WINDOWS}/bin/windows/"
+cp -p "${REPO_ROOT}/bin/windows/uninstall.bat" "${PKG_WINDOWS}/bin/windows/"
 
 cat << 'EOF' > "${PKG_WINDOWS}/QUICKSTART.md"
 # Kubera (Windows) Quickstart
@@ -165,22 +170,22 @@ tar -xzf kubera-windows.tar.gz
 cd kubera
 
 # 1. Global Installation via PowerShell (Recommended):
-.\install.ps1 -Copy
+.\bin\windows\install.ps1 -Copy
 
 # 2. Or Project-Scoped Installation:
-.\install.ps1 -Copy -ProjectDirectory C:\path\to\my-project
+.\bin\windows\install.ps1 -Copy -ProjectDirectory C:\path\to\my-project
 
 # 3. Alternatively via Windows Command Prompt (CMD):
-.\install.cmd --copy
+.\bin\windows\install.cmd --copy
 ```
 
 Restart Antigravity and open the **Kubera** pane in the AuxPane.
 
 ## Uninstallation
 ```powershell
-.\uninstall.ps1
+.\bin\windows\uninstall.ps1
 # Or CMD:
-.\uninstall.cmd
+.\bin\windows\uninstall.cmd
 ```
 EOF
 
@@ -190,15 +195,12 @@ EOF
 echo "Staging Universal multi-platform package..."
 PKG_UNIVERSAL="${STAGING_DIR}/universal/kubera"
 stage_common "${PKG_UNIVERSAL}"
-cp -p "${REPO_ROOT}/install.sh" "${PKG_UNIVERSAL}/"
-cp -p "${REPO_ROOT}/uninstall.sh" "${PKG_UNIVERSAL}/"
-cp -p "${REPO_ROOT}/install.ps1" "${PKG_UNIVERSAL}/"
-cp -p "${REPO_ROOT}/install.cmd" "${PKG_UNIVERSAL}/"
-cp -p "${REPO_ROOT}/install.bat" "${PKG_UNIVERSAL}/"
-cp -p "${REPO_ROOT}/uninstall.ps1" "${PKG_UNIVERSAL}/"
-cp -p "${REPO_ROOT}/uninstall.cmd" "${PKG_UNIVERSAL}/"
-cp -p "${REPO_ROOT}/uninstall.bat" "${PKG_UNIVERSAL}/"
-chmod +x "${PKG_UNIVERSAL}/install.sh" "${PKG_UNIVERSAL}/uninstall.sh"
+mkdir -p "${PKG_UNIVERSAL}/bin/linux" "${PKG_UNIVERSAL}/bin/mac" "${PKG_UNIVERSAL}/bin/macos" "${PKG_UNIVERSAL}/bin/windows"
+cp -p "${REPO_ROOT}/bin/linux/"* "${PKG_UNIVERSAL}/bin/linux/"
+cp -p "${REPO_ROOT}/bin/mac/"* "${PKG_UNIVERSAL}/bin/mac/"
+cp -p "${REPO_ROOT}/bin/mac/"* "${PKG_UNIVERSAL}/bin/macos/"
+cp -p "${REPO_ROOT}/bin/windows/"* "${PKG_UNIVERSAL}/bin/windows/"
+chmod +x "${PKG_UNIVERSAL}/bin/linux/"*.sh "${PKG_UNIVERSAL}/bin/mac/"*.sh "${PKG_UNIVERSAL}/bin/macos/"*.sh
 
 cat << 'EOF' > "${PKG_UNIVERSAL}/QUICKSTART.md"
 # Kubera Multi-Platform Quickstart
@@ -213,23 +215,30 @@ This package contains installables for Linux, macOS, and Windows.
 
 ## Installation
 
-### Linux & macOS:
+### Linux:
 ```bash
-./install.sh --copy
+./bin/linux/install.sh --copy
 # Or project-scoped:
-./install.sh --copy -p /path/to/my-project
+./bin/linux/install.sh --copy -p /path/to/my-project
+```
+
+### macOS:
+```bash
+./bin/mac/install.sh --copy
+# Or project-scoped:
+./bin/mac/install.sh --copy -p /path/to/my-project
 ```
 
 ### Windows (PowerShell):
 ```powershell
-.\install.ps1 -Copy
+.\bin\windows\install.ps1 -Copy
 # Or project-scoped:
-.\install.ps1 -Copy -ProjectDirectory C:\path\to\my-project
+.\bin\windows\install.ps1 -Copy -ProjectDirectory C:\path\to\my-project
 ```
 
 ### Windows (Command Prompt):
 ```cmd
-.\install.cmd --copy
+.\bin\windows\install.cmd --copy
 ```
 
 Restart Antigravity and open the **Kubera** pane in the AuxPane.
