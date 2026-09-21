@@ -1,0 +1,198 @@
+name: Build & Publish Release Packages
+
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release Tag (e.g. v0.1.0)'
+        required: false
+        default: 'v0.1.0'
+      draft:
+        description: 'Publish as Draft Release'
+        type: boolean
+        required: false
+        default: false
+      prerelease:
+        description: 'Publish as Pre-Release'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  test-cross-platform:
+    name: Test (${{ matrix.os }} - Node ${{ matrix.node }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: ['20.x', '22.x']
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Run Test Suite
+        run: node --test tests/pricing.test.mjs tests/aggregate.test.mjs
+
+  build-and-package:
+    name: Build & Package Releases
+    needs: test-cross-platform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Set Release Version
+        id: vars
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            VERSION="${{ github.ref_name }}"
+          elif [[ -n "${{ inputs.tag_name }}" ]]; then
+            VERSION="${{ inputs.tag_name }}"
+          else
+            VERSION="v0.1.0-$(date +'%Y%m%d%H%M%S')"
+          fi
+          echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Building packages for release version: ${VERSION}"
+
+      - name: Run Package Script
+        run: |
+          chmod +x scripts/package.sh
+          ./scripts/package.sh "${{ steps.vars.outputs.VERSION }}"
+
+      # ========================================================================
+      # Upload GitHub Actions Artifacts (Downloadable from Actions summary)
+      # ========================================================================
+      - name: Upload Kubera Linux Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kubera-linux
+          path: |
+            dist/kubera-linux.tar.gz
+            dist/kubera-linux.zip
+          retention-days: 90
+
+      - name: Upload Kubera Darwin / macOS Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kubera-darwin
+          path: |
+            dist/kubera-darwin.tar.gz
+            dist/kubera-darwin.zip
+            dist/kubera-macos.tar.gz
+            dist/kubera-macos.zip
+          retention-days: 90
+
+      - name: Upload Kubera Windows Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kubera-windows
+          path: |
+            dist/kubera-windows.tar.gz
+            dist/kubera-windows.zip
+          retention-days: 90
+
+      - name: Upload Kubera Universal Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kubera-universal
+          path: |
+            dist/kubera-universal.tar.gz
+            dist/kubera-universal.zip
+          retention-days: 90
+
+      - name: Upload All Release Assets Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kubera-release-all
+          path: dist/*
+          retention-days: 90
+
+      # ========================================================================
+      # Publish Official GitHub Release (On Tags or Manual Dispatch)
+      # ========================================================================
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.vars.outputs.VERSION }}
+          name: Kubera Release ${{ steps.vars.outputs.VERSION }}
+          draft: ${{ inputs.draft || false }}
+          prerelease: ${{ inputs.prerelease || false }}
+          generate_release_notes: true
+          body: |
+            # Kubera Release ${{ steps.vars.outputs.VERSION }}
+
+            **Per-thread token consumption by model and list-price FinOps counterfactual for Google Antigravity**
+
+            Download the package matching your operating system:
+
+            ---
+
+            ### 📦 Release Packages
+
+            | Platform | Archive Format | Quick Install Command |
+            | :--- | :--- | :--- |
+            | 🐧 **Linux** | [`kubera-linux.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-linux.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-linux.zip) | `tar -xzf kubera-linux.tar.gz && cd kubera && ./install.sh --copy` |
+            | 🍎 **macOS** | [`kubera-darwin.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-darwin.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-darwin.zip) | `tar -xzf kubera-darwin.tar.gz && cd kubera && ./install.sh --copy` |
+            | 🪟 **Windows** | [`kubera-windows.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-windows.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-windows.zip) | `tar -xzf kubera-windows.tar.gz && cd kubera && .\install.ps1 -Copy` |
+            | 🌐 **Universal** | [`kubera-universal.tar.gz`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-universal.tar.gz) · [`zip`](https://github.com/${{ github.repository }}/releases/download/${{ steps.vars.outputs.VERSION }}/kubera-universal.zip) | Multi-platform archive containing Linux, macOS, and Windows scripts |
+
+            ---
+
+            ### 🚀 Installation Guide
+
+            #### 🐧 Linux & 🍎 macOS
+            ```bash
+            tar -xzf kubera-linux.tar.gz  # or kubera-darwin.tar.gz on macOS
+            cd kubera
+            ./install.sh --copy
+            ```
+
+            #### 🪟 Windows (PowerShell)
+            ```powershell
+            tar -xzf kubera-windows.tar.gz
+            cd kubera
+            .\install.ps1 -Copy
+            ```
+
+            #### 🪟 Windows (Command Prompt)
+            ```cmd
+            tar -xzf kubera-windows.tar.gz
+            cd kubera
+            .\install.cmd --copy
+            ```
+
+            ---
+
+            ### 🔒 Integrity Checksums (SHA-256)
+            See attached `SHA256SUMS.txt` to verify archive integrity.
+
+            ---
+
+            ### ℹ️ Notes & Caveats
+            - **Prerequisites**: Node.js 20+ and Google Antigravity.
+            - **Quota vs Price**: Antigravity meters AI credits, not tokens, and publishes no credit-to-token or credit-to-dollar conversion. `/credits` and `/usage` remain the authority on quota. Kubera calculates what this token volume would have cost at published public list prices.
+          files: dist/*

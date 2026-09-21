@@ -25,17 +25,73 @@ The dollar figures answer a different question: *if this exact token volume had
 been bought at published API list price, what would it have cost?* That is the
 number that makes model choice comparable.
 
+## Release Packages
+
+Pre-built, standalone release packages for major operating systems are published via GitHub Actions on every release:
+
+| Platform | Archive Formats | Install Command |
+| :--- | :--- | :--- |
+| 🐧 **Linux** | `.tar.gz` · `.zip` | `tar -xzf kubera-linux.tar.gz && cd kubera && ./install.sh --copy` |
+| 🍎 **macOS** | `.tar.gz` · `.zip` | `tar -xzf kubera-darwin.tar.gz && cd kubera && ./install.sh --copy` |
+| 🪟 **Windows** | `.tar.gz` · `.zip` | `tar -xzf kubera-windows.tar.gz && cd kubera && .\install.ps1 -Copy` |
+| 🌐 **Universal** | `.tar.gz` · `.zip` | Multi-platform fallback archive with scripts for all operating systems |
+
+Integrity checksums (`SHA256SUMS.txt`) are attached to every release.
+
 ## Install
 
+### Option A: From Pre-built Release Archive (Recommended)
+
+Download the archive for your operating system from the latest release, extract, and run:
+
+**Linux & macOS:**
 ```bash
-./install.sh
+tar -xzf kubera-linux.tar.gz   # or kubera-darwin.tar.gz on macOS
+cd kubera
+./install.sh --copy
 ```
 
-Symlinks the repo into `~/.gemini/antigravity/plugins/kubera` and runs
-the test suite first. Restart Antigravity and open the **Kubera** pane.
+**Windows (PowerShell):**
+```powershell
+tar -xzf kubera-windows.tar.gz
+cd kubera
+.\install.ps1 -Copy
+```
 
-There is no build step. The sidecar is plain ESM Node with no third-party
-dependencies; the host resolves `sidecar_sdk` at run time.
+**Windows (Command Prompt):**
+```cmd
+tar -xzf kubera-windows.tar.gz
+cd kubera
+.\install.cmd --copy
+```
+
+### Option B: From Source Clone
+
+```bash
+# Linux / macOS
+git clone https://github.com/mohan-the-octocat/kubera.git
+cd kubera
+./install.sh
+
+# Windows (PowerShell)
+git clone https://github.com/mohan-the-octocat/kubera.git
+cd kubera
+.\install.ps1
+```
+
+Symlinks or creates an NTFS directory junction into `~/.gemini/antigravity/plugins/kubera` (and `~/.gemini/config/plugins/kubera`) and verifies the test suite. Restart Antigravity and open the **Kubera** pane in the AuxPane.
+
+### Uninstallation
+
+```bash
+# Linux / macOS
+./uninstall.sh
+
+# Windows (PowerShell)
+.\uninstall.ps1
+```
+
+There is no build step. The sidecar is plain ESM Node with no third-party dependencies; the host resolves `sidecar_sdk` at run time.
 
 ## Provenance
 

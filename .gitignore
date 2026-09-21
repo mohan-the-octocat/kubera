@@ -4,3 +4,7 @@ node_modules/
 
 # Local org rate-card override; never commit customer pricing.
 pricing.override.json
+
+# Release distributions and staging
+dist/
+staging/
