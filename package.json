@@ -1,6 +1,6 @@
 {
   "name": "kubera",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Antigravity UI plugin: per-thread token consumption by model, with a FinOps cost view built on published vendor list prices.",
   "type": "module",
   "private": true,
