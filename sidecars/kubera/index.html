@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Kubera</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/preload.js"></script>
+</head>
+<body>
+  <header class="head">
+    <div class="head-line">
+      <strong id="total-cost">—</strong>
+      <span class="muted" id="total-tokens">waiting for data…</span>
+      <span class="spacer"></span>
+      <span class="dot" id="live-dot" title="refresh status"></span>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab active" data-tab="usage" role="tab">Usage</button>
+      <button class="tab" data-tab="compare" role="tab">Compare</button>
+      <button class="tab" data-tab="export" role="tab">Export</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="panel-usage" class="panel">
+      <div id="usage-rows"></div>
+      <div id="advisories"></div>
+    </section>
+
+    <section id="panel-compare" class="panel hidden">
+      <p class="note">
+        Token counts are held constant at this thread's actual usage.
+        Rows marked <span class="warn-inline">⚠</span> cross a tokenizer family and are indicative only.
+      </p>
+      <div id="compare-rows"></div>
+      <div id="compare-basis"></div>
+    </section>
+
+    <section id="panel-export" class="panel hidden">
+      <p class="note">Exports embed the rate-card version and every source URL with its access date.</p>
+      <div class="btn-row">
+        <button id="btn-md">Copy Markdown</button>
+        <button id="btn-json">Copy JSON</button>
+        <button id="btn-csv">Copy CSV</button>
+      </div>
+      <p class="muted" id="export-status"></p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div id="provenance" class="muted"></div>
+    <div id="caveats"></div>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

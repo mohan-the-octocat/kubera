@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Kubera">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4285F4"/>
+      <stop offset="1" stop-color="#A142F4"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#g)"/>
+  <!-- Lens ring. -->
+  <circle cx="28" cy="28" r="14" fill="none" stroke="#fff" stroke-width="3.5" opacity="0.95"/>
+  <!-- Handle. -->
+  <line x1="38.5" y1="38.5" x2="50" y2="50" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/>
+  <!-- Token bars under the lens: consumption by model. -->
+  <rect x="21" y="30" width="4" height="7"  rx="1.4" fill="#fff"/>
+  <rect x="27" y="25" width="4" height="12" rx="1.4" fill="#fff"/>
+  <rect x="33" y="21" width="4" height="16" rx="1.4" fill="#fff" opacity="0.8"/>
+</svg>

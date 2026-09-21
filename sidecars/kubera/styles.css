@@ -1,0 +1,176 @@
+/* Kubera — host-theme-adaptive styles.
+   Literal fallbacks keep the page legible when opened directly in a browser
+   during development. Modern root tokens only; no --vscode-* passthroughs. */
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: var(--background, #fafafa);
+  color: var(--foreground, #333);
+  margin: 0;
+  padding: 0;
+  line-height: 1.45;
+  font-size: 13px;
+}
+
+.head {
+  position: sticky;
+  top: 0;
+  background: var(--background, #fafafa);
+  border-bottom: 1px solid var(--border, #e0e0e0);
+  padding: 12px 14px 0;
+  z-index: 2;
+}
+
+.head-line {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.head-line strong { font-size: 17px; }
+
+.spacer { flex: 1; }
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--muted-foreground, #888);
+  display: inline-block;
+}
+.dot.live { background: #2e9e5b; }
+.dot.stale { background: #c9821a; }
+.dot.error { background: #c0392b; }
+
+.tabs { display: flex; gap: 2px; margin-top: 10px; }
+
+.tab {
+  background: transparent;
+  color: var(--muted-foreground, #666);
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 7px 12px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.tab:hover { color: var(--foreground, #333); background: transparent; }
+.tab.active {
+  color: var(--foreground, #333);
+  border-bottom-color: var(--primary, #0e639c);
+  font-weight: 500;
+}
+
+main { padding: 12px 14px 4px; }
+.panel.hidden { display: none; }
+
+.row {
+  background: var(--card, #fff);
+  border: 1px solid var(--card-border, var(--border, #e0e0e0));
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+
+.row-top {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.row-name { font-weight: 500; }
+.row-cost { margin-left: auto; font-variant-numeric: tabular-nums; }
+.row-share {
+  color: var(--muted-foreground, #666);
+  font-variant-numeric: tabular-nums;
+  min-width: 46px;
+  text-align: right;
+}
+
+.row-detail {
+  color: var(--muted-foreground, #666);
+  font-size: 12px;
+  margin-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar {
+  height: 3px;
+  background: var(--secondary, #f0f0f0);
+  border-radius: 2px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+.bar > i { display: block; height: 100%; background: var(--primary, #0e639c); }
+
+.cmp {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--border, #eee);
+  font-variant-numeric: tabular-nums;
+}
+.cmp:last-child { border-bottom: none; }
+.cmp.actual {
+  background: var(--secondary, #f5f5f5);
+  border-radius: 4px;
+  font-weight: 500;
+}
+.cmp-name { flex: 1; }
+.cmp-delta { min-width: 64px; text-align: right; }
+.cheaper { color: #2e9e5b; }
+.dearer { color: #c0392b; }
+
+.note, .muted {
+  color: var(--muted-foreground, #666);
+  font-size: 12px;
+}
+.note { margin: 0 0 10px; }
+
+.warn-inline { color: #c9821a; }
+
+.advisory, .caveat {
+  border-left: 2px solid var(--border, #ddd);
+  padding: 4px 0 4px 9px;
+  margin: 6px 0;
+  color: var(--muted-foreground, #666);
+  font-size: 12px;
+}
+.caveat.warn { border-left-color: #c9821a; }
+.caveat.err { border-left-color: #c0392b; }
+
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+
+button {
+  background: var(--primary, #0e639c);
+  color: var(--primary-foreground, #fff);
+  border: 1px solid var(--border, transparent);
+  border-radius: 4px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+button:hover { background: color-mix(in srgb, var(--primary, #0e639c) 88%, var(--foreground, #000)); }
+button:active { background: color-mix(in srgb, var(--primary, #0e639c) 76%, var(--foreground, #000)); }
+
+.foot {
+  border-top: 1px solid var(--border, #e0e0e0);
+  padding: 10px 14px 14px;
+  margin-top: 6px;
+}
+
+.empty {
+  color: var(--muted-foreground, #666);
+  padding: 22px 4px;
+  text-align: center;
+}
+
+code {
+  background: var(--secondary, #f5f5f5);
+  border: 1px solid var(--border, #e0e0e0);
+  border-radius: 3px;
+  padding: 0 3px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}

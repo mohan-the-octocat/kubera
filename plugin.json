@@ -1,0 +1,10 @@
+{
+  "name": "kubera",
+  "description": "Per-thread token consumption by model, priced against public list rates, with a FinOps counterfactual across the models Antigravity offers.",
+  "logo": "assets/logo.svg",
+  "suggestedPrompts": [
+    "Open Kubera and show this thread's token spend by model",
+    "What would this thread have cost on Gemini 3.8 Flash instead?",
+    "Export this thread's token accounting as a Markdown table"
+  ]
+}

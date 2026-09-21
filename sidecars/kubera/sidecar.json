@@ -1,0 +1,18 @@
+{
+  "command": "node",
+  "args": ["main.mjs"],
+  "restart_policy": "always",
+  "display_name": "Kubera",
+  "description": "Token consumption by model and list-price FinOps comparison for the active thread",
+  "has_web_ui": true,
+  "ui_config": {
+    "display_name": "Kubera",
+    "views": [
+      {
+        "path": "/",
+        "entrypoint": "SIDECAR_UI_ENTRYPOINT_AUX_PANE",
+        "title": "Kubera"
+      }
+    ]
+  }
+}

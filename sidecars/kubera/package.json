@@ -1,0 +1,6 @@
+{
+  "name": "kubera",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Token consumption and cost lens for the active Antigravity thread."
+}
